@@ -1,7 +1,7 @@
-import Head from 'next/head'
 import clientPromise from '../lib/mongodb'
 import Card from '../components/card'
 import Link from 'next/link'
+
 
 export default function Home({ data }) {
   return (
@@ -19,20 +19,18 @@ export default function Home({ data }) {
                     <div className="border-b border-gray-200 pb-6">
                       <h3 className="-my-3 flow-root">
                         <button type="button" className="py-3 bg-white w-full flex items-center justify-between text-sm text-gray-400 hover:text-gray-500" aria-controls="filter-section-1" aria-expanded="false">
-                          <span className="font-bold text-gray-900 text-3xl"> {x} </span>
+                          <span className="font-medium text-gray-900"> {x} </span>
                         </button>
                       </h3>
                       {
                         Object.keys(data.traits[x]).map(a => (
                           <div className="pt-2" id="filter-section-1">
                             <div class="space-y-1">
-                              <div class="flex items-center ml-2 border-b-2">
+                            <div class="flex items-center ml-2 border-b-2">
                                 <Link href={`/search?type=${x}&value=${encodeURIComponent(a)}`}>
                                   <a>  {a} - {data.traits[x][a].count}</a>
                                 </Link>
-                                {/* <input id="filter-category-0" name="category[]" value={a} type="checkbox" class="h-4 w-4 border-gray-300 rounded text-indigo-600 focus:ring-indigo-500"></input>
-                                <label for="filter-category-0" class="ml-3 text-sm text-gray-600"> {a} - {data.traits[x][a].count}</label> */}
-                              </div>
+                                </div>
                             </div>
                           </div>
                         ))
@@ -62,7 +60,7 @@ export default function Home({ data }) {
   )
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps(ctx) {
   let ALL = { "home": [], "traits": {} }
   const client = await clientPromise
 
@@ -85,7 +83,7 @@ export async function getServerSideProps(context) {
     ALL["traits"][i.type][i._id] = { "count": i.count }
   }
 
-  let home = await collection.find().sort({ "rank": 1 }).limit(20).toArray()
+  let home = await collection.find({"attributes.traittype": ctx.query.type,"attributes.value": ctx.query.value}).sort({ "score": -1 }).limit(20).toArray()
   for (const i of home) {
     ALL["home"].push({ name: i.name, img: i.image, score: i.score, token: i.tokenid, rank: i.rank })
   }
