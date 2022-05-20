@@ -1,4 +1,5 @@
 module.exports = {
+  swcMinify: true,
   future: {
     webpack5: true
   },
@@ -15,6 +16,14 @@ module.exports = {
       ...config.resolve.fallback,
       fs: false,
     };
+    disableCacheDirectory(config)
     return config
   },
+}
+
+
+function disableCacheDirectory(config) {
+  config.module.rules
+    .filter(({loader}) => loader === 'babel-loader')
+    .map(l => (l.options.cacheDirectory = false))
 }
