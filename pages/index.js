@@ -12,7 +12,6 @@ export default function Home({ data, info }) {
     e.preventDefault()
     router.push(`/search?type=ID&value=${e.target.elements.search.value}`)
   }
-
   return (
     <div className="bg-white">
       <div>
@@ -113,7 +112,7 @@ export async function getServerSideProps(context) {
   let osQ = "";
   for (const i of home) {
     osQ += `&token_id=${i.tokenid}`
-    ALL["home"][i.tokenid] ? null : ALL["traits"][i.tokenid] = {}
+    ALL["home"][i.tokenid] ? null : ALL["home"][i.tokenid] = {}
     ALL["home"][i.tokenid] = ({ name: i.name, img: i.image, prevUrl: null, score: i.score, token: i.tokenid, rank: i.rank, price: null, calldata: null })
   }
 
@@ -126,7 +125,6 @@ export async function getServerSideProps(context) {
       ALL["home"][i.asset.token_id].price = i.base_price
     }
   }
-
   return {
     props: { data: ALL, info: contractInfo[0].collectionAddress },
   }
