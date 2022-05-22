@@ -46,7 +46,7 @@ export default function Home({ data, info }) {
               <div className="hidden lg:block">
                 {
                   Object.keys(data.traits).map(x => (
-                    <div className="border-b border-gray-200 pb-6">
+                    <div key={x} className="border-b border-gray-200 pb-6">
                       <h3 className="-my-3 flow-root">
                         <button type="button" className="py-3 bg-white w-full flex items-center justify-between text-sm text-gray-400 hover:text-gray-500" aria-controls="filter-section-1" aria-expanded="false">
                           <span className="font-medium text-gray-900"> {x} </span>
@@ -54,9 +54,9 @@ export default function Home({ data, info }) {
                       </h3>
                       {
                         Object.keys(data.traits[x]).map(a => (
-                          <div className="pt-2" id="filter-section-1">
-                            <div class="space-y-1">
-                              <div class="flex items-center ml-2 border-b-2">
+                          <div key={a} className="pt-2" id="filter-section-1">
+                            <div className="space-y-1">
+                              <div className="flex items-center ml-2 border-b-2">
                                 <Link href={`/search?type=${x}&value=${encodeURIComponent(a)}`}>
                                   <a>  {a} - {data.traits[x][a].count}</a>
                                 </Link>
@@ -72,10 +72,12 @@ export default function Home({ data, info }) {
 
               </div>
               <div className="lg:col-span-3">
-                <div class="container grid grid-cols-3 gap-2 mx-auto">
+                <div className="container grid grid-cols-3 gap-2 mx-auto">
                   {
                     Object.keys(data.home).map(x => (
-                      <Card allData={data.home[x]} contract={info} />
+                      <div key={x.tokenid}>
+                        <Card allData={pageData[x]} contract={info} />
+                      </div>
                     ))
                   }
                 </div>
@@ -93,10 +95,10 @@ export async function getServerSideProps(ctx) {
   var requestOptions = {
     method: 'GET',
     headers: {
-        "X-API-KEY": "2ed58dd572444abfb3dea518ba5181af"
+      "X-API-KEY": "2ed58dd572444abfb3dea518ba5181af"
     },
     redirect: 'follow'
-}
+  }
 
   let ALL = { "home": {}, "traits": {} }
   const client = await clientPromise
@@ -123,17 +125,18 @@ export async function getServerSideProps(ctx) {
   let home = ctx.query.type == "ID" ? await collection.find({ "tokenid": Number(ctx.query.value) }).sort({ "score": -1 }).limit(20).toArray() : await collection.find({ "attributes.traittype": ctx.query.type, "attributes.value": ctx.query.value }).sort({ "score": 1 }).limit(20).toArray()
   let osQ = "";
   for (const i of home) {
-    osQ += `&token_id=${i.tokenid}`
-    ALL["home"][i.tokenid] ? null : ALL["traits"][i.tokenid] = {}
-    ALL["home"][i.tokenid] = ({ name: i.name, img: i.image, prevUrl: null, score: i.score, token: i.tokenid, rank: i.rank, price: null, calldata: null })
+    osQ += `&token_ids=${i.tokenid}`
+    ALL["home"]["a_" + i.tokenid] ? null : ALL["home"]["a_" + i.tokenid] = {}
+    ALL["home"]["a_" + i.tokenid] = ({ name: i.name, img: i.image, prevUrl: null, score: i.score, token: i.tokenid, rank: i.rank, price: null, calldata: null })
   }
+
   const res1 = await fetch(`https://api.opensea.io/wyvern/v1/orders?asset_contract_address=${contractInfo[0].collectionAddress}&bundled=false&include_bundled=false${osQ}&side=1&limit=20&offset=0&order_by=eth_price&order_direction=asc`, requestOptions)
   const data = await res1.json()
   for (const i of data.orders) {
-    ALL["home"][i.asset.token_id].prevUrl = i.asset.image_preview_url;
-    if (ALL["home"][i.asset.token_id].price == null) {
-      ALL["home"][i.asset.token_id].calldata = i.calldata
-      ALL["home"][i.asset.token_id].price = i.base_price
+    ALL["home"]["a_" + i.asset.token_id].prevUrl = i.asset.image_preview_url;
+    if (ALL["home"]["a_" + i.asset.token_id].price == null) {
+      ALL["home"]["a_" + i.asset.token_id].calldata = i.calldata
+      ALL["home"]["a_" + i.asset.token_id].price = i.base_price
     }
   }
 
