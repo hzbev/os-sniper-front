@@ -3,24 +3,12 @@ import Card from '../components/card'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useAppContext } from '../src/state'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Web3 from 'web3';
 
 
 export default function Home({ data, info }) {
-  const { ABI } = useAppContext()
-  let test;
-  useEffect(() => {
-    let web3 = new Web3(window.ethereum)
-    console.log(web3)
-    test = new web3.eth.Contract(ABI, info)
-    console.log(test)
-  })
-
-
-
-
-
+  const [pageData, setData] = useState(data.home);
   const router = useRouter()
 
   function handleSubmit(e) {
