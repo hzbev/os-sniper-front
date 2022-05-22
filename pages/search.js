@@ -35,7 +35,7 @@ export default function Home({ data, info }) {
           <form onSubmit={handleSubmit}>
             <input
               type="number"
-              class=" w-full mt-2 text-base font-normal bg-white bg-clip-padding border border-solid border-gray-300 rounded focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+              className=" w-full mt-2 text-base font-normal bg-white bg-clip-padding border border-solid border-gray-300 rounded focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
               id="search"
               placeholder="token id search"
             />

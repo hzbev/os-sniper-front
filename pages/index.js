@@ -21,7 +21,7 @@ export default function Home({ data, info }) {
       }),
     })
     let res = await ress.json()
-    setData({...pageData, ...res})
+    setData({ ...pageData, ...res })
 
   }
 
@@ -37,7 +37,7 @@ export default function Home({ data, info }) {
           <form onSubmit={handleSubmit}>
             <input
               type="number"
-              class=" w-full mt-2 text-base font-normal bg-white bg-clip-padding border border-solid border-gray-300 rounded focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+              className="w-full mt-2 text-base font-normal bg-white bg-clip-padding border border-solid border-gray-300 rounded focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
               id="search"
               placeholder="token id search"
             />
@@ -47,7 +47,7 @@ export default function Home({ data, info }) {
               <div className="hidden lg:block">
                 {
                   Object.keys(data.traits).map(x => (
-                    <div className="border-b border-gray-200 pb-6">
+                    <div key={x} className="border-b border-gray-200 pb-6">
                       <h3 className="-my-3 flow-root">
                         <button type="button" className="py-3 bg-white w-full flex items-center justify-between text-sm text-gray-400 hover:text-gray-500" aria-controls="filter-section-1" aria-expanded="false">
                           <span className="font-bold text-gray-900 text-3xl"> {x} </span>
@@ -55,9 +55,9 @@ export default function Home({ data, info }) {
                       </h3>
                       {
                         Object.keys(data.traits[x]).map(a => (
-                          <div className="pt-2" id="filter-section-1">
-                            <div class="space-y-1">
-                              <div class="flex items-center ml-2 border-b-2">
+                          <div key={a} className="pt-2" id="filter-section-1">
+                            <div className="space-y-1">
+                              <div className="flex items-center ml-2 border-b-2">
                                 <Link href={`/search?type=${x}&value=${encodeURIComponent(a)}`}>
                                   <a>  {a} ({data.traits[x][a].count})</a>
                                 </Link>
@@ -75,10 +75,12 @@ export default function Home({ data, info }) {
 
               </div>
               <div className="lg:col-span-3">
-                <div class="container grid grid-cols-3 gap-2 mx-auto">
+                <div className="container grid grid-cols-3 gap-2 mx-auto">
                   {
                     Object.keys(pageData).map(x => (
-                      <Card allData={pageData[x]} contract={info} />
+                      <div key={x.tokenid}>
+                        <Card allData={pageData[x]} contract={info} />
+                      </div>
                     ))
                   }
                 </div>
@@ -141,7 +143,6 @@ export async function getServerSideProps(context) {
       ALL["home"]["a_" + i.asset.token_id].price = i.base_price
     }
   }
-  console.log(ALL["home"])
 
 
   return {

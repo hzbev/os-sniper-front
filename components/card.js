@@ -83,9 +83,6 @@ export default function Card({ allData, contract }) {
 
             await seaport.fulfillOrder({ order, accountAddress })
         } catch (error) {
-            console.log("order error")
-
-            console.log(error)
             if (error.message == "Not found: no matching order found") {
                 setMessage("Not For Sale")
             }
@@ -93,12 +90,12 @@ export default function Card({ allData, contract }) {
     }
 
     return (
-        <div className="flex flex-col text-center m-2">
+        <div key={allData.token} className="flex flex-col text-center m-2">
             <a target="_blank" href={`https://opensea.io/assets/ethereum/${contract}/${allData.token}`} rel="noopener noreferrer">
                 #{allData.token} - rank: {allData.rank}
 
             </a>
-            <div class="w-full rounded">
+            <div className="w-full rounded">
                 <img src={allData.prevUrl == null ? allData.img : allData.prevUrl}
                     alt="image" loading="lazy"></img>
             </div>
