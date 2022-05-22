@@ -2,11 +2,28 @@ import clientPromise from '../lib/mongodb'
 import Card from '../components/card'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 
 
 
 export default function Home({ data, info }) {
   const router = useRouter()
+  const [pageData, setData] = useState(data.home);
+
+  async function fetchNew() {
+    let ress = await fetch("/api/load", {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        "index": pageData[Object.keys(pageData)[Object.keys(pageData).length - 1]].rank
+      }),
+    })
+    let res = await ress.json()
+    setData({...pageData, ...res})
+
+  }
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -60,13 +77,12 @@ export default function Home({ data, info }) {
               <div className="lg:col-span-3">
                 <div class="container grid grid-cols-3 gap-2 mx-auto">
                   {
-                    Object.keys(data.home).map(x => (
-                      <Card allData={data.home[x]} contract={info} />
+                    Object.keys(pageData).map(x => (
+                      <Card allData={pageData[x]} contract={info} />
                     ))
                   }
-
-
                 </div>
+                <div onClick={fetchNew}>LOAD MORE</div>
               </div>
             </div>
           </section>
@@ -81,10 +97,10 @@ export async function getServerSideProps(context) {
   var requestOptions = {
     method: 'GET',
     headers: {
-        "X-API-KEY": "2ed58dd572444abfb3dea518ba5181af"
+      "X-API-KEY": "2ed58dd572444abfb3dea518ba5181af"
     },
     redirect: 'follow'
-}
+  }
 
   let ALL = { "home": {}, "traits": {} }
   const client = await clientPromise
@@ -111,20 +127,23 @@ export async function getServerSideProps(context) {
   let home = await collection.find({ collectionAddress: { $exists: false } }).sort({ "rank": 1 }).limit(20).toArray()
   let osQ = "";
   for (const i of home) {
-    osQ += `&token_id=${i.tokenid}`
-    ALL["home"][i.tokenid] ? null : ALL["home"][i.tokenid] = {}
-    ALL["home"][i.tokenid] = ({ name: i.name, img: i.image, prevUrl: null, score: i.score, token: i.tokenid, rank: i.rank, price: null, calldata: null })
+    osQ += `&token_ids=${i.tokenid}`
+    ALL["home"]["a_" + i.tokenid] ? null : ALL["home"]["a_" + i.tokenid] = {}
+    ALL["home"]["a_" + i.tokenid] = ({ name: i.name, img: i.image, prevUrl: null, score: i.score, token: i.tokenid, rank: i.rank, price: null, calldata: null })
   }
 
   const res1 = await fetch(`https://api.opensea.io/wyvern/v1/orders?asset_contract_address=${contractInfo[0].collectionAddress}&bundled=false&include_bundled=false${osQ}&side=1&limit=20&offset=0&order_by=eth_price&order_direction=asc`, requestOptions)
   const data = await res1.json()
   for (const i of data.orders) {
-    ALL["home"][i.asset.token_id].prevUrl = i.asset.image_preview_url;
-    if (ALL["home"][i.asset.token_id].price == null) {
-      ALL["home"][i.asset.token_id].calldata = i.calldata
-      ALL["home"][i.asset.token_id].price = i.base_price
+    ALL["home"]["a_" + i.asset.token_id].prevUrl = i.asset.image_preview_url;
+    if (ALL["home"]["a_" + i.asset.token_id].price == null) {
+      ALL["home"]["a_" + i.asset.token_id].calldata = i.calldata
+      ALL["home"]["a_" + i.asset.token_id].price = i.base_price
     }
   }
+  console.log(ALL["home"])
+
+
   return {
     props: { data: ALL, info: contractInfo[0].collectionAddress },
   }

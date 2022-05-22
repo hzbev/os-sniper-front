@@ -53,7 +53,7 @@ export default function Card({ allData, contract }) {
     //             target: _data.target,
     //             type: "function",
     //         }
-            
+
     //         let ooop = encodeReplacementPattern(teest, "owner")
 
     //         console.log(ooop)
@@ -94,7 +94,10 @@ export default function Card({ allData, contract }) {
 
     return (
         <div className="flex flex-col text-center m-2">
-            #{allData.token} - rank: {allData.rank}
+            <a target="_blank" href={`https://opensea.io/assets/ethereum/${contract}/${allData.token}`} rel="noopener noreferrer">
+                #{allData.token} - rank: {allData.rank}
+
+            </a>
             <div class="w-full rounded">
                 <img src={allData.prevUrl == null ? allData.img : allData.prevUrl}
                     alt="image" loading="lazy"></img>

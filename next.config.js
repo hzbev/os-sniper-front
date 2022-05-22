@@ -16,7 +16,7 @@ module.exports = {
       ...config.resolve.fallback,
       fs: false,
     };
-    disableCacheDirectory(config)
+    // disableCacheDirectory(config)
     return config
   },
 }
