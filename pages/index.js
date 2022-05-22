@@ -33,7 +33,7 @@ export default function Home({ data, info }) {
     <div className="bg-white">
       <div>
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className='text-center text-5xl font-extrabold'>not a trait sniper</div>
+          <div className='text-center text-5xl font-extrabold'>not a wallet drainer</div>
           <form onSubmit={handleSubmit}>
             <input
               type="number"
