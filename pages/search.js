@@ -110,7 +110,7 @@ export async function getServerSideProps(ctx) {
     ALL["traits"][i.type][i._id] = { "count": i.count }
   }
   let contractInfo = await collection.find({ collectionAddress: { $exists: true } }).toArray()
-  let home = ctx.query.type == "ID" ? await collection.find({ "tokenid": Number(ctx.query.value) }).sort({ "score": -1 }).limit(20).toArray() : await collection.find({ "attributes.traittype": ctx.query.type, "attributes.value": ctx.query.value }).sort({ "score": 1 }).limit(20).toArray()
+  let home = ctx.query.type == "ID" ? await collection.find({ "tokenid": Number(ctx.query.value) }).sort({ "rank": 1 }).limit(20).toArray() : await collection.find({ "attributes.traittype": ctx.query.type, "attributes.value": ctx.query.value }).sort({ "score": 1 }).limit(20).toArray()
   let osQ = "";
   for (const i of home) {
     osQ += `&token_ids=${i.tokenid}`
